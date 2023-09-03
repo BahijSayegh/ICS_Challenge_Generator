@@ -5,6 +5,7 @@ The events can be customized based on:
 - Programming language
 - Start date of the challenge
 - Number of days for the challenge
+- Category (default is None)
 - Duration of each event
 - Start time of each event
 - Timezone
@@ -30,7 +31,7 @@ def main():
     """
     # Check the number of arguments and assign defaults if necessary
     if len(sys.argv) < 2:
-        print("Usage: python script_name.py [language] [start_date (DD.MM.YYYY)] [number_of_days=30] [length_in_hours=2] [start_time=20:00] [timezone=local]")
+        print("Usage: python script_name.py [language] [start_date (DD.MM.YYYY)] [number_of_days=30] [category=None] [length_in_hours=2] [start_time=20:00] [timezone=local]")
         sys.exit(1)
 
     # Extract command line arguments with defaults
@@ -46,9 +47,10 @@ def main():
         naive_start_date = naive_start_date.replace(hour=0, minute=0, second=0, microsecond=0)  # Reset time to midnight
 
     number_of_days = int(sys.argv[3]) if len(sys.argv) > 3 else 30
-    length_in_hours = float(sys.argv[4]) if len(sys.argv) > 4 else 2.0
-    start_hour, start_minute = map(int, sys.argv[5].split(':')) if len(sys.argv) > 5 else (20, 0)
-    timezone_str = sys.argv[6] if len(sys.argv) > 6 else None
+    category = sys.argv[4] if len(sys.argv) > 4 else None
+    length_in_hours = float(sys.argv[5]) if len(sys.argv) > 5 else 2.0
+    start_hour, start_minute = map(int, sys.argv[6].split(':')) if len(sys.argv) > 6 else (20, 0)
+    timezone_str = sys.argv[7] if len(sys.argv) > 7 else None
 
     # Get the specified timezone or default to local timezone
     if timezone_str:
@@ -65,6 +67,8 @@ def main():
     for i in range(number_of_days):
         event = Event()
         event.name = f"Day {str(i+1).zfill(3)} of {number_of_days} Days {language} Challenge"
+        if category:
+            event.categories = {category}
         event.begin = start_date + timedelta(days=i)
         event.duration = timedelta(hours=length_in_hours)
         cal.events.add(event)
